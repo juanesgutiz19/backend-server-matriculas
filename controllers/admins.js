@@ -2,7 +2,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 
 const Admin = require('../models/admin');
-
+const { generateJWT } = require('../helpers/jwt');
 
 
 const getAdmins = async(req, res) => {
@@ -23,9 +23,9 @@ const createAdmin = async(req, res = response) => {
 
     try {
 
-        const existeUsername = await Admin.findOne({ username });
+        const existsUsername = await Admin.findOne({ username });
 
-        if (existeUsername) {
+        if (existsUsername) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El username ya existe'
@@ -39,9 +39,12 @@ const createAdmin = async(req, res = response) => {
 
         await admin.save();
 
+        const token = await generateJWT(admin._id);
+
         res.json({
             ok: true,
-            admin
+            admin,
+            token
         });
 
     } catch (error) {

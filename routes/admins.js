@@ -7,10 +7,11 @@ const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
 
 const { getAdmins, createAdmin } = require('../controllers/admins');
+const { validateJWT } = require('../middlewares/validate-jwt');
 
 const router = Router();
 
-router.get('/', getAdmins);
+router.get('/', validateJWT, getAdmins);
 
 router.post('/', [
         check('username', 'El username es obligatorio').not().isEmpty(),
