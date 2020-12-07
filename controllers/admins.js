@@ -1,26 +1,57 @@
+const { response } = require('express');
+const bcrypt = require('bcryptjs');
+
 const Admin = require('../models/admin');
 
 
-const getAdmins = (req, res) => {
+
+const getAdmins = async(req, res) => {
+
+    const admins = await Admin.find({}, 'username password');
 
     res.json({
         ok: true,
-        mdg: 'get admins'
+        admins
     });
 };
 
-const createAdmin = async(req, res) => {
+const createAdmin = async(req, res = response) => {
 
     const { username, password } = req.body;
 
-    const usuario = new Admin(req.body);
 
-    await usuario.save();
 
-    res.json({
-        ok: true,
-        usuario
-    });
+    try {
+
+        const existeUsername = await Admin.findOne({ username });
+
+        if (existeUsername) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El username ya existe'
+            });
+        }
+
+        const admin = new Admin(req.body);
+
+        const salt = bcrypt.genSaltSync();
+        admin.password = bcrypt.hashSync(password, salt);
+
+        await admin.save();
+
+        res.json({
+            ok: true,
+            admin
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, revisar logs'
+        });
+    }
+
 };
 
 module.exports = {
