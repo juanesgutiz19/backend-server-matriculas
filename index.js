@@ -9,15 +9,12 @@ const app = express();
 
 app.use(cors());
 
+app.use(express.json());
+
 dbConnection();
 
-app.get('/', (req, res) => {
 
-    res.json({
-        ok: true,
-        msg: 'hola mundo'
-    });
-});
+app.use('/api/admins', require('./routes/admins'));
 
 //mean_user
 //sNmvfvyKHuuq4lS9
