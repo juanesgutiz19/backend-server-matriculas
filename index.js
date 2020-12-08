@@ -15,6 +15,7 @@ dbConnection();
 
 
 app.use('/api/admins', require('./routes/admins'));
+app.use('/api/students', require('./routes/students'));
 app.use('/api/login', require('./routes/auth'));
 
 //mean_user
