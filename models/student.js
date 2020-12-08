@@ -41,7 +41,7 @@ const StudentSchema = Schema({
         type: String,
         required: true,
     },
-    lastAprovvedGrade: {
+    lastApprovedGrade: {
         type: String,
         required: true,
     },

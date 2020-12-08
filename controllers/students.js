@@ -3,11 +3,26 @@ const bcrypt = require('bcryptjs');
 
 const Student = require('../models/student');
 
-const getStudents = (req, res = response) => {
+const getStudents = async(req, res = response) => {
+
+
+    // const students = await Student.find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade');
+
+    const desde = Number(req.query.desde) || 0;
+
+    const [students, total] = await Promise.all([
+        Student
+        .find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade')
+        .skip(desde)
+        .limit(5),
+
+        Student.countDocuments()
+    ]);
 
     res.json({
         ok: true,
-        msg: 'getStudents'
+        students,
+        total
     });
 };
 

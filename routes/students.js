@@ -31,7 +31,7 @@ router.post('/', [
         check('contactNumber', 'El número de contacto es obligatorio').not().isEmpty(),
         check('guardianName', 'El nombre de acudiente es obligatorio').not().isEmpty(),
         check('guardianContactNumber', 'El teléfono del acudiente es obligatorio').not().isEmpty(),
-        check('lastAprovvedGrade', 'El último grado aprobado es obligatorio').not().isEmpty(),
+        check('lastApprovedGrade', 'El último grado aprobado es obligatorio').not().isEmpty(),
         validateFields
     ],
     createStudent
