@@ -5,14 +5,11 @@ const Student = require('../models/student');
 
 const getStudents = async(req, res = response) => {
 
-
-    // const students = await Student.find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade');
-
     const desde = Number(req.query.desde) || 0;
 
     const [students, total] = await Promise.all([
         Student
-        .find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade')
+        .find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade img')
         .skip(desde)
         .limit(5),
 
@@ -28,9 +25,9 @@ const getStudents = async(req, res = response) => {
 
 const createStudent = async(req, res = response) => {
 
-    const { identityDocument } = req.body;
+    const { identityDocument, email } = req.body;
     const id = identityDocument;
-
+    const studentEmail = email;
 
     try {
 
@@ -40,6 +37,15 @@ const createStudent = async(req, res = response) => {
             return res.status(400).json({
                 ok: false,
                 msg: 'El estudiante con ese ID ya está registrado'
+            });
+        }
+
+        const existsEmail = await Student.findOne({ email });
+
+        if (existsEmail) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El estudiante con ese correo electrónico ya está registrado'
             });
         }
 
@@ -69,20 +75,101 @@ const createStudent = async(req, res = response) => {
     }
 };
 
-const updateStudent = (req, res = response) => {
+const updateStudent = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'updateStudent'
-    });
+    const studentId = req.params.id;
+
+    try {
+
+        const studentDB = await Student.findById(studentId);
+
+        if (!studentDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe un estudiante por ese id'
+            });
+        }
+
+        // Actualizaciones
+        const { identityDocument, email, password, ...fields } = req.body;
+
+        if (studentDB.email !== email) {
+
+            const existsEmail = await Student.findOne({ email });
+            if (existsEmail) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un usuario con ese email'
+                });
+            }
+        }
+
+        if (studentDB.identityDocument !== identityDocument) {
+
+            const existsId = await Student.findOne({ identityDocument });
+            if (existsId) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un usuario con esa identificación'
+                });
+            }
+        }
+
+
+        fields.identityDocument = identityDocument;
+        fields.email = email;
+
+        const salt = bcrypt.genSaltSync();
+        fields.password = bcrypt.hashSync(password, salt);
+
+        const updatedStudent = await Student.findByIdAndUpdate(studentId, fields, { new: true });
+
+        res.json({
+            ok: true,
+            usuario: updatedStudent
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        })
+    }
 };
 
-const deleteStudent = (req, res = response) => {
+const deleteStudent = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'deleteStudent'
-    });
+    const studentId = req.params.id;
+
+    try {
+
+        const studentDB = await Student.findById(studentId);
+
+        if (!studentDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe un usuario por ese id'
+            });
+        }
+
+        await Student.findByIdAndDelete(studentId);
+
+        res.json({
+            ok: true,
+            msg: 'Estudiante eliminado'
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        });
+
+    }
+
 };
 
 

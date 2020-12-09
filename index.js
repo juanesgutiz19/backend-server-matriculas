@@ -13,11 +13,11 @@ app.use(express.json());
 
 dbConnection();
 
-
 app.use('/api/admins', require('./routes/admins'));
 app.use('/api/students', require('./routes/students'));
 app.use('/api/todo', require('./routes/searches'));
 app.use('/api/login', require('./routes/auth'));
+app.use('/api/upload', require('./routes/uploads'));
 
 //mean_user
 //sNmvfvyKHuuq4lS9

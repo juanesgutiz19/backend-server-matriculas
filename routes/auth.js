@@ -3,9 +3,10 @@
 */
 
 const { Router } = require('express');
-const { login } = require('../controllers/auth');
+const { login, renewToken } = require('../controllers/auth');
 const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
+const { validateJWT } = require('../middlewares/validate-jwt');
 
 const router = Router();
 
@@ -15,6 +16,11 @@ router.post('/', [
         validateFields,
     ],
     login
+);
+
+router.get('/renew',
+    validateJWT,
+    renewToken
 );
 
 module.exports = router;
