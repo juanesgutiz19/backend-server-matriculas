@@ -9,7 +9,7 @@ const getStudents = async(req, res = response) => {
 
     const [students, total] = await Promise.all([
         Student
-        .find({}, 'password identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade img')
+        .find({}, 'identityDocument fullName age address email contactNumber guardianName guardianContactNumber lastApprovedGrade img')
         .skip(desde)
         .limit(5),
 
@@ -86,7 +86,7 @@ const updateStudent = async(req, res = response) => {
         if (!studentDB) {
             return res.status(404).json({
                 ok: false,
-                msg: 'No existe un estudiante por ese id'
+                msg: 'No existe un estudiante con ese id'
             });
         }
 
@@ -120,7 +120,9 @@ const updateStudent = async(req, res = response) => {
         fields.email = email;
 
         const salt = bcrypt.genSaltSync();
-        fields.password = bcrypt.hashSync(password, salt);
+        if (fields.password != undefined) {
+            fields.password = bcrypt.hashSync(password, salt);
+        }
 
         const updatedStudent = await Student.findByIdAndUpdate(studentId, fields, { new: true });
 

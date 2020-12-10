@@ -40,7 +40,6 @@ router.post('/', [
 router.put('/:id', [
         validateJWT,
         check('identityDocument', 'El documento es obligatorio').not().isEmpty(),
-        check('password', 'El password es obligatorio').not().isEmpty(),
         check('fullName', 'El nombre es obligatorio').not().isEmpty(),
         check('age', 'La edad es obligatoria').not().isEmpty(),
         check('address', 'La dirección es obligatoria').not().isEmpty(),
