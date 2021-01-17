@@ -12,4 +12,11 @@ const AdminSchema = Schema({
     },
 });
 
+AdminSchema.method('toJSON', function() {
+    const { __v, uid, ...object } = this.toObject();
+    object.uid = uid;
+    return object;
+});
+
+
 module.exports = model('Admin', AdminSchema);
