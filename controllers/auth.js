@@ -1,5 +1,6 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const Admin = require('../models/admin');
 const { generateJWT } = require('../helpers/jwt');
@@ -8,7 +9,6 @@ const login = async(req, res = response) => {
     const { username, password } = req.body;
 
     try {
-
 
         // Verificar username
 
@@ -32,6 +32,7 @@ const login = async(req, res = response) => {
         }
 
         const token = await generateJWT(adminDB._id);
+        console.log('token login', token);
 
         res.json({
             ok: true,
@@ -47,6 +48,25 @@ const login = async(req, res = response) => {
     }
 };
 
+const renewToken = async(req, res = response) => {
+
+
+    const id = req.uid;
+
+    // Generar el TOKEN - JWT
+    const token = await generateJWT(id);
+
+    const admin = await Admin.findById(id);
+
+    res.json({
+        ok: true,
+        token,
+        admin
+    });
+
+};
+
 module.exports = {
-    login
+    login,
+    renewToken
 };
