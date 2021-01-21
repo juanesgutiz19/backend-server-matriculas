@@ -14,6 +14,7 @@ const router = Router();
 router.get('/', validateJWT, getGroups);
 
 router.post('/', [
+        validateJWT,
         check('mainTeacher', 'El profesor es obligatorio').not().isEmpty(),
         check('dayShift', 'La jornada es obligatoria').not().isEmpty(),
         check('degree', 'El degree id debe de ser válido').isMongoId(),
