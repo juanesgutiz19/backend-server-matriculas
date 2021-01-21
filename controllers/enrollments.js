@@ -2,6 +2,8 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 
 const Enrollment = require('../models/enrollment');
+const Degree = require('../models/degree');
+
 const { generateJWT } = require('../helpers/jwt');
 
 
@@ -12,6 +14,8 @@ const getEnrollments = async(req, res) => {
         .populate('group', 'degree mainTeacher')
         .populate('student', 'identityDocument fullName');
 
+
+    console.log(enrollments);
     res.json({
         ok: true,
         enrollments

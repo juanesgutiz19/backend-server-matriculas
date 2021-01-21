@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const Admin = require('../models/admin');
+
+const Student = require('../models/student');
 const { generateJWT } = require('../helpers/jwt');
 const login = async(req, res = response) => {
 
@@ -10,20 +12,28 @@ const login = async(req, res = response) => {
 
     try {
 
-        // Verificar username
+        let tipoUsuario = '';
+
+        let userDB = await Admin.findOne({ username });
 
 
-        const adminDB = await Admin.findOne({ username });
-
-        if (!adminDB) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'username no encontrado'
-            });
+        if (!userDB) {
+            const identityDocument = username;
+            userDB = await Student.findOne({ identityDocument });
+            if (!userDB) {
+                return res.status(404).json({
+                    ok: false,
+                    msg: 'username no encontrado'
+                });
+            } else {
+                tipoUsuario = 'Student';
+            }
+        } else {
+            tipoUsuario = 'Admin';
         }
 
         // Verificar contraseña
-        const validPassword = bcrypt.compareSync(password, adminDB.password);
+        const validPassword = bcrypt.compareSync(password, userDB.password);
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,
@@ -31,12 +41,13 @@ const login = async(req, res = response) => {
             });
         }
 
-        const token = await generateJWT(adminDB._id);
-        console.log('token login', token);
+
+        const token = await generateJWT(userDB._id);
 
         res.json({
             ok: true,
-            token
+            token,
+            tipoUsuario
         });
 
     } catch (error) {
@@ -56,12 +67,15 @@ const renewToken = async(req, res = response) => {
     // Generar el TOKEN - JWT
     const token = await generateJWT(id);
 
-    const admin = await Admin.findById(id);
+    let user = await Admin.findById(id);
+    if (!user) {
+        user = await Student.findById(id);
+    }
 
     res.json({
         ok: true,
         token,
-        admin
+        user
     });
 
 };
