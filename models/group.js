@@ -9,6 +9,10 @@ const GroupSchema = Schema({
         type: String,
         required: true
     },
+    quota: {
+        type: Number,
+        required: true
+    },
     degree: {
         type: Schema.Types.ObjectId,
         ref: 'Degree',
