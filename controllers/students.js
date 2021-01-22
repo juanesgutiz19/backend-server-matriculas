@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 
 const Student = require('../models/student');
+const Enrollment = require('../models/enrollment');
 
 const getStudents = async(req, res = response) => {
 
@@ -137,7 +138,7 @@ const updateStudent = async(req, res = response) => {
         res.status(500).json({
             ok: false,
             msg: 'Error inesperado'
-        })
+        });
     }
 };
 
@@ -154,6 +155,14 @@ const deleteStudent = async(req, res = response) => {
                 ok: false,
                 msg: 'No existe un usuario por ese id'
             });
+        }
+
+        const student = studentId;
+
+        const enrollmentDB = await Enrollment.find({ student });
+
+        if (enrollmentDB) {
+            await Enrollment.deleteMany({ student });
         }
 
         await Student.findByIdAndDelete(studentId);
