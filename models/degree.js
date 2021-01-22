@@ -11,4 +11,9 @@ const DegreeSchema = Schema({
     },
 }, { collection: 'degrees' });
 
+DegreeSchema.method('toJSON', function() {
+    const { __v, ...object } = this.toObject();
+    return object;
+});
+
 module.exports = model('Degree', DegreeSchema);
