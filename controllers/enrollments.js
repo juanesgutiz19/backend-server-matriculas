@@ -26,7 +26,7 @@ const getEnrollmentsStudent = async(req, res) => {
 
     //Degree
     const enrollments = await Enrollment.find({ student })
-        .populate('group', 'degree');
+        .populate('group', 'degree mainTeacher dayShift');
     res.json({
         ok: true,
         enrollments
