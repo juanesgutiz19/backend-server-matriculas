@@ -2,6 +2,7 @@ const { response } = require('express');
 
 const Student = require('../models/student');
 
+
 const getCollectionDocuments = async(req, res = response) => {
 
     const table = req.params.table;

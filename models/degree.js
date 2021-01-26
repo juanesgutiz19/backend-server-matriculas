@@ -5,14 +5,15 @@ const DegreeSchema = Schema({
         type: String,
         required: true
     },
-    quota: {
-        type: Number,
-        required: true
-    },
     subjects: {
         type: String,
         required: true,
     },
 }, { collection: 'degrees' });
+
+DegreeSchema.method('toJSON', function() {
+    const { __v, ...object } = this.toObject();
+    return object;
+});
 
 module.exports = model('Degree', DegreeSchema);
