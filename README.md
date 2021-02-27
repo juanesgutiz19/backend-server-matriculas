@@ -1,3 +1,2 @@
 # backend-server-matriculas
-
-## Welcome
+## Backend hecho con NodeJS.
