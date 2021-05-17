@@ -60,22 +60,24 @@ const login = async(req, res = response) => {
 };
 
 const renewToken = async(req, res = response) => {
-
-
+    
     const id = req.uid;
-
+    
     // Generar el TOKEN - JWT
     const token = await generateJWT(id);
 
     let user = await Admin.findById(id);
+    let userType = 'Admin';
     if (!user) {
         user = await Student.findById(id);
+        userType = 'Student';
     }
 
     res.json({
         ok: true,
         token,
-        user
+        user,
+        userType
     });
 
 };
