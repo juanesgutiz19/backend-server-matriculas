@@ -6,6 +6,7 @@ const Admin = require('../models/admin');
 
 const Student = require('../models/student');
 const { generateJWT } = require('../helpers/jwt');
+
 const login = async(req, res = response) => {
 
     const { username, password } = req.body;
@@ -41,8 +42,15 @@ const login = async(req, res = response) => {
             });
         }
 
+        let loginName;
 
-        const token = await generateJWT(userDB._id);
+        if (tipoUsuario === 'Admin') {
+            loginName = username
+        } else {
+            loginName = userDB.fullName;
+        }
+
+        const token = await generateJWT(userDB._id, loginName);
 
         res.json({
             ok: true,
@@ -61,18 +69,18 @@ const login = async(req, res = response) => {
 
 const renewToken = async(req, res = response) => {
     
-    const id = req.uid;
+    // const id = req.uid;
+    const { uid, loginName } = req;
     
     // Generar el TOKEN - JWT
-    const token = await generateJWT(id);
+    const token = await generateJWT(uid, loginName);
 
-    let user = await Admin.findById(id);
+    let user = await Admin.findById(uid);
     let userType = 'Admin';
     if (!user) {
-        user = await Student.findById(id);
+        user = await Student.findById(uid);
         userType = 'Student';
     }
-
     res.json({
         ok: true,
         token,

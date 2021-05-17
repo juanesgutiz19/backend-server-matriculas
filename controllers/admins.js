@@ -18,9 +18,7 @@ const getAdmins = async(req, res) => {
 const createAdmin = async(req, res = response) => {
 
     const { username, password } = req.body;
-
-
-
+    
     try {
 
         const existsUsername = await Admin.findOne({ username });
@@ -39,7 +37,7 @@ const createAdmin = async(req, res = response) => {
 
         await admin.save();
 
-        const token = await generateJWT(admin._id);
+        const token = await generateJWT(admin._id, username);
 
         res.json({
             ok: true,
