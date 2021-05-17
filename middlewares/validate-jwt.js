@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-
-
 const validateJWT = (req, res, next) => {
 
     // Leer el Token
