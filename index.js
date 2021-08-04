@@ -13,6 +13,7 @@ app.use(express.json());
 
 dbConnection();
 
+
 app.use('/api/admins', require('./routes/admins'));
 app.use('/api/degrees', require('./routes/degrees'));
 app.use('/api/enrollments', require('./routes/enrollments'));
